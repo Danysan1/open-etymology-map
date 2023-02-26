@@ -1,8 +1,8 @@
 #!/bin/bash
 
 cd $(dirname "$0")
-/usr/bin/git fetch
-/usr/bin/git pull
+/usr/bin/git fetch --recurse-submodules
+/usr/bin/git pull --recurse-submodules
 
 # https://docs.docker.com/compose/profiles/#enable-profiles
 export COMPOSE_PROFILES=prod,promtail
