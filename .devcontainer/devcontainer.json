@@ -6,9 +6,9 @@
 
 	// Update the 'dockerComposeFile' list if you have more compose files or use different names.
 	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
-	"dockerComposeFile": "../docker-compose.yml",
+	"dockerComposeFile": "../osm-wikidata-map-framework-oem/docker-compose.yml",
 
-	"runServices": ["oem-postgis", "pgadmin", "oem-web-dev"],	
+	"runServices": ["oem-web-dev"],	
 
 	// The 'service' property is the name of the service for the container that VS Code should
 	// use. Update this value and .devcontainer/docker-compose.yml to the real service name.
@@ -18,14 +18,15 @@
 	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
 	"workspaceFolder": "/var/www/html",
 
-	// Set *default* container specific settings.json values on container create.
-	"settings": {},
-
 	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": [
-		"bmewburn.vscode-intelephense-client",
-		"getpsalm.psalm-vscode-plugin"
-	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"bmewburn.vscode-intelephense-client",
+				"getpsalm.psalm-vscode-plugin"
+			]
+		}
+	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
