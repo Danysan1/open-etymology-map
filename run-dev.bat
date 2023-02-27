@@ -1,3 +1,3 @@
-cd osm-wikidata-map-framework-oem
+cd osm-wikidata-map-framework-etymology
 docker-compose --profile dev up -d
 npm run dev
