@@ -1,10 +1,11 @@
 #!/bin/bash
 
 cd $(dirname "$0")
-/usr/bin/git fetch
-/usr/bin/git pull
+/usr/bin/git fetch --recurse-submodules
+/usr/bin/git pull --recurse-submodules
 
 # https://docs.docker.com/compose/profiles/#enable-profiles
+cd osm-wikidata-map-framework-etymology
 export COMPOSE_PROFILES=prod,promtail
 /usr/local/bin/docker-compose pull
 if [ '--build' == "$1" ]; then

@@ -1,130 +1,14 @@
 include:
-#  - template: Docker.gitlab-ci.yml
-#  - template: Security/DAST.gitlab-ci.yml # https://docs.gitlab.com/ee/user/application_security/dast/#dast-run-options
-  - template: Security/SAST.gitlab-ci.yml # https://docs.gitlab.com/ee/user/application_security/sast/#configuration
-  - template: Security/License-Scanning.gitlab-ci.yml
-  - template: Security/Dependency-Scanning.gitlab-ci.yml # https://docs.gitlab.com/ee/user/application_security/dependency_scanning/index.html#configuration
-#  - template: Security/Secret-Detection.gitlab-ci.yml
-#  - template: Security/Container-Scanning.gitlab-ci.yml
+  remote: 'https://gitlab.com/openetymologymap/osm-wikidata-map-framework/-/raw/main/common.gitlab-ci.yml'
 
 variables:
   SENTRY_RELEASE_NAME: "open-etymology-map-$CI_COMMIT_TAG"
-  # Required secrets: SENTRY_ORG, SENTRY_AUTH_TOKEN, FTP_HOST, FTP_USER, FTP_PASS
 
 stages:
   - release
-#  - build
-  - test
-#  - dast
-  - deploy
-  - force_deploy
 
 gitlab_release:
-  stage: release
-  image: registry.gitlab.com/gitlab-org/release-cli:latest
-  script:
-    - echo "Creating release $CI_COMMIT_TAG"
-  release:
-    name: '$CI_COMMIT_TAG'
-    tag_name: '$CI_COMMIT_TAG'
-    description: "$(date '+%Y-%m-%d')"
-  rules:
-    - if: '$CI_COMMIT_TAG =~ /^v\d+(\.\d+)*$/'
-      when: on_success
+  extends: .gitlab_release
 
 sentry_release:
-  stage: release
-  image: getsentry/sentry-cli:1
-  variables:
-    SENTRY_LOG_LEVEL: debug
-  script:
-    - sentry-cli releases new --project "open-etymology-map-frontend" "$SENTRY_RELEASE_NAME"
-    - sentry-cli releases set-commits --auto "$SENTRY_RELEASE_NAME"
-  rules:
-    - if: '$CI_COMMIT_TAG =~ /^v\d+(\.\d+)*$/'
-      when: on_success
-
-psalm:
-  stage: test
-  image: composer:2
-  cache:
-    - key: "composer"
-      paths:
-        - vendor/
-    - key: "psalm"
-      paths:
-        - psalm_cache/
-  before_script:
-    - php --version
-    - composer --version
-    - composer install --no-interaction
-    - vendor/bin/psalm --version
-  script:
-    - vendor/bin/psalm --stats --report=psalm.codeclimate.json || echo '==================== THERE ARE PROBLEMS IN THE CODE ===================='
-    #- vendor/bin/psalm --stats --taint-analysis --report=psalm_taint.codeclimate.json || echo '==================== THERE ARE SECURITY PROBLEMS IN THE CODE ===================='
-  coverage: '/^Psalm was able to infer types for \d+\.\d+% of the codebase$/'
-  #allow_failure: false
-  timeout: 2 minutes
-  artifacts:
-    when: "always"
-    reports:
-      codequality: psalm.codeclimate.json
-      #sarif: psalm_taint.codeclimate.json
-  rules:
-    - when: on_success
-
-# https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#make-docker-in-docker-builds-faster-with-docker-layer-caching
-docker-build:
-  stage: deploy
-  image: docker:23-git
-  services:
-    - docker:dind
-  before_script:
-    - cp .env.example .env
-    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes # https://forum.gitlab.com/t/build-multi-arch-docker-image/23569/4
-    - docker buildx create --use
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    #- docker pull "$CI_REGISTRY_IMAGE" || echo "NO CACHE FOR $CI_REGISTRY_IMAGE , BUILDING FROM SCRATCH"
-  script:
-    - echo "Building $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
-    - docker buildx bake oem-web-prod --pull --push
-    #- docker build --target "prod" --cache-from "$CI_REGISTRY_IMAGE" --tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" --tag "$CI_REGISTRY_IMAGE" -f Dockerfile .
-    #- echo "Pushing $CI_REGISTRY_IMAGE"
-    #- docker image push "$CI_REGISTRY_IMAGE"
-    #- docker image push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
-  rules:
-    - if: '$CI_COMMIT_TAG =~ /^v\d+(\.\d+)*$/'
-      exists: 
-        - Dockerfile
-      when: on_success
-    - exists:
-        - Dockerfile
-      when: manual
-
-.sentry_deploy:
-  stage: deploy
-  image: getsentry/sentry-cli:1
-  variables:
-    SENTRY_LOG_LEVEL: debug
-  script:
-    - sentry-cli releases deploys "$SENTRY_RELEASE_NAME" new -e "$DEPLOY_ENV_NAME"
-    - if [ "prod" = $DEPLOY_ENV_NAME ]; then sentry-cli releases finalize "$SENTRY_RELEASE_NAME"; fi
-  rules:
-    - if: '$CI_COMMIT_TAG =~ /^v\d+(\.\d+)*$/'
-      when: on_success
-
-# sentry_deploy_prod:
-#   extends: .sentry_deploy
-#   variables:
-#     DEPLOY_ENV_NAME: "prod"
-#   needs:
-#     - deploy_prod
-#     - sentry_release
-
-# sentry_deploy_test:
-#   extends: .sentry_deploy
-#   variables:
-#     DEPLOY_ENV_NAME: "test"
-#   needs:
-#     - deploy_test
-#     - sentry_release
+  extends: .sentry_release

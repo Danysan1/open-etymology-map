@@ -27,9 +27,9 @@ docker-compose version
 
 ## https://gitlab.com/openetymologymap/open-etymology-map/-/blob/main/CONTRIBUTING.md
 
-git clone https://gitlab.com/openetymologymap/open-etymology-map.git
+git clone --recurse-submodules https://gitlab.com/openetymologymap/open-etymology-map.git
 cd open-etymology-map
-cp ".env.example" ".env"
+cp ".env.example" "osm-wikidata-map-framework-oem/.env"
 cp "promtail/config.template.yaml" "promtail/config.yaml"
 
 # https://docs.docker.com/compose/profiles/#enable-profiles
@@ -42,8 +42,8 @@ docker-compose up -d
 docker-compose exec oem-web-prod certbot --apache
 ## Future certificate renewal: docker-compose exec oem-web-prod certbot renew
 
-chmod u+x ec2-update.sh
-echo '0 * * * * ./open-etymology-map/ec2-update.sh' | crontab -
+chmod u+x update.sh
+echo '0 * * * * ./open-etymology-map/update.sh' | crontab -
 ## Logs: docker-compose logs
 
 echo 'Remember to fill .env !'

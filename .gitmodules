@@ -1,0 +1,3 @@
+[submodule "osm-wikidata-map-framework"]
+	path = osm-wikidata-map-framework-etymology
+	url = https://gitlab.com/openetymologymap/osm-wikidata-map-framework.git
