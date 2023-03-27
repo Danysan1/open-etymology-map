@@ -14,4 +14,5 @@ if [ '--build' == "$1" ]; then
 fi
 /usr/local/bin/docker-compose up --detach --always-recreate-deps
 /usr/bin/docker image prune -af
+/usr/bin/docker volume prune
 watch /usr/bin/docker ps
