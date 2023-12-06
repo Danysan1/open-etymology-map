@@ -1,0 +1,38 @@
+{
+    "de": {
+        "app": {
+            "title": "Open Etymology Map",
+            "description": "Interaktive Karte, die die Etymologie der Namen von Straßen und Sehenswürdigkeiten auf der Grundlage von OpenStreetMap und Wikidata anzeigt."
+        }
+    },
+    "en": {
+        "app": {
+            "title": "Open Etymology Map",
+            "description": "Interactive map that shows the etymology of names of streets and points of interest based on OpenStreetMap and Wikidata."
+        }
+    },
+    "es": {
+        "app": {
+            "title": "Open Etymology Map",
+            "description": "Mapa interactivo que muestra la etimología de nombres de calles y puntos de interés basado en OpenStreetMap y Wikidata."
+        }
+    },
+    "fr": {
+        "app": {
+            "title": "Open Etymology Map",
+            "description": "Carte interactive qui montre l'étymologie des noms de rues et de points d'intérêt basée sur OpenStreetMap et Wikidata."
+        }
+    },
+    "it": {
+        "app": {
+            "title": "Open Etymology Map",
+            "description": "Mappa interattiva che visualizza l'etimologia dei nomi di strade e punti di interesse, basata su OpenStreetMap e Wikidata."
+        }
+    },
+    "da": {
+        "app": {
+            "title": "Open Etymology Map",
+            "description": "Interaktivt kort, der viser etymologien bag navne på gader og interessepunkter, baseret på OpenStreetMap og Wikidata."
+        }
+    }
+}
